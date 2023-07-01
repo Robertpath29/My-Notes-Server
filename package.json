@@ -4,7 +4,7 @@
     "description": "server for My Notes",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "PORT=5001 nodemon src/index.js"
     },
     "repository": {
         "type": "git",
@@ -15,5 +15,15 @@
     "bugs": {
         "url": "https://github.com/Robertpath29/My-Notes-Server/issues"
     },
-    "homepage": "https://github.com/Robertpath29/My-Notes-Server#readme"
+    "homepage": "https://github.com/Robertpath29/My-Notes-Server#readme",
+    "dependencies": {
+        "bcrypt": "^5.1.0",
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.0",
+        "pg": "^8.11.1"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22"
+    }
 }
