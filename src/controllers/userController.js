@@ -36,5 +36,40 @@ class UserController {
             res.json({ message: `error registration user (${error.message})` });
         }
     }
+
+    async logIn(req, res) {
+        try {
+            const { userName, password } = req.body;
+            const repeatUsername = await db.query(
+                `SELECT * FROM person where login = $1`,
+                [userName]
+            );
+            if (repeatUsername.rows.length === 0) {
+                return res.json({
+                    message: `The user with this login is not registered.`,
+                    cancelRegister: true,
+                });
+            }
+
+            const validPassword = bcrypt.compareSync(
+                password,
+                repeatUsername.rows[0].password
+            );
+            if (!validPassword) {
+                return res.json({
+                    message: `Incorrect password entered`,
+                    cancelRegister: true,
+                });
+            }
+
+            res.json({
+                user: repeatUsername.rows[0],
+                userIsLogIn: true,
+            });
+        } catch (error) {
+            console.log(error.message);
+            res.json({ message: `error log in user (${error.message})` });
+        }
+    }
 }
 module.exports = new UserController();
