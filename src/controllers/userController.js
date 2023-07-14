@@ -37,9 +37,9 @@ class UserController {
         }
     }
 
-    async logIn(req, res) {
+    async getLogInUser(req, res) {
         try {
-            const { userName, password } = req.body;
+            const { userName, password } = req.query;
             const repeatUsername = await db.query(
                 `SELECT * FROM person where login = $1`,
                 [userName]

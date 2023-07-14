@@ -5,13 +5,18 @@ const server = express();
 const router = require(`./routers/routers`);
 
 server.use(express.json());
-server.use(cors());
+server.use(
+    cors({
+        origin: "http://192.168.1.104:3000",
+        credentials: true,
+    })
+);
 server.use(`/`, router);
 
 const startServer = () => {
     try {
-        server.listen(PORT, () =>
-            console.log(`Server start from PORT=${PORT}`)
+        server.listen(PORT, "192.168.1.104", () =>
+            console.log(`Server start from PORT=http://192.168.1.104:${PORT}`)
         );
     } catch (error) {
         console.log(error.message);
