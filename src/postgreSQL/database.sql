@@ -10,7 +10,7 @@ CREATE TABLE infoUser(
     name VARCHAR(255),
     surname VARCHAR(255),
     photo VARCHAR(255),
-    birthday INTEGER,
+    birthday VARCHAR(255),
     country VARCHAR(255),
     city VARCHAR(255),
     address VARCHAR(255),

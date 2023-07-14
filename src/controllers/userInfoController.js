@@ -1,29 +1,37 @@
+const { log } = require("console");
 const db = require(`../postgreSQL/db`);
+const path = require(`path`);
 class UserInfoController {
     async createInfoUser(req, res) {
         try {
-            const {
-                name,
-                surname,
-                photo,
-                birthday,
-                country,
-                city,
-                address,
-                user_id,
-            } = req.body;
+            const { data } = req.body;
+            const json = JSON.parse(data);
+            let photo = "";
+            if (req.files) {
+                const img = req.files.img;
+                const fileName = Date.now() + img.name.slice(-5);
+                const filePath = path.resolve(
+                    __dirname,
+                    "..",
+                    "assets",
+                    "userIcon",
+                    fileName
+                );
+                photo = fileName;
+                req.files.img.mv(filePath);
+            }
 
             const newInfoUser = await db.query(
                 `INSERT INTO infoUser (name, surname, photo, birthday, country, city, address, user_id) VALUES ($1, $2, $3, $4 ,$5, $6, $7, $8) RETURNING *`,
                 [
-                    name,
-                    surname,
+                    json.name,
+                    json.surname,
                     photo,
-                    birthday,
-                    country,
-                    city,
-                    address,
-                    user_id,
+                    json.birthday,
+                    json.country,
+                    json.city,
+                    json.address,
+                    json.user_id,
                 ]
             );
             res.json(newInfoUser.rows[0]);

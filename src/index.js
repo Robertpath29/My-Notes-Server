@@ -1,10 +1,13 @@
 const express = require(`express`);
 const cors = require(`cors`);
 const PORT = process.env.PORT || 5001;
-const server = express();
 const router = require(`./routers/routers`);
+const fileUpload = require(`express-fileupload`);
+const server = express();
 
 server.use(express.json());
+server.use(express.static(`src/assets/userIcon`));
+server.use(fileUpload({}));
 server.use(
     cors({
         origin: "http://192.168.1.104:3000",
