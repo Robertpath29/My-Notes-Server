@@ -13,6 +13,7 @@ class UserInfoController {
                 const filePath = path.resolve(
                     __dirname,
                     "..",
+                    "..",
                     "assets",
                     "userIcon",
                     fileName
@@ -41,12 +42,16 @@ class UserInfoController {
     }
 
     async getInfoUser(req, res) {
-        const { id } = req.query;
-        const posts = await db.query(
-            `select * from InfoUser where user_id = $1`,
-            [id]
-        );
-        res.json(posts.rows);
+        try {
+            const { id } = req.query;
+            const posts = await db.query(
+                `select * from InfoUser where user_id = $1`,
+                [id]
+            );
+            res.json(posts.rows);
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 

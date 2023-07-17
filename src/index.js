@@ -6,7 +6,7 @@ const fileUpload = require(`express-fileupload`);
 const server = express();
 
 server.use(express.json());
-server.use(express.static(`src/assets/userIcon`));
+server.use(express.static(`./assets/userIcon`));
 server.use(fileUpload({}));
 server.use(
     cors({
