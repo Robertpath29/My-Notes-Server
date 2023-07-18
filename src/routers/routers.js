@@ -8,5 +8,6 @@ router.post(`/registration`, userController.createUser);
 router.get(`/login`, userController.getLogInUser);
 router.post(`/InfoUser`, userInfoController.createInfoUser);
 router.get(`/InfoUser`, userInfoController.getInfoUser);
+router.put(`/InfoUser`, userInfoController.editInfoUser);
 
 module.exports = router;

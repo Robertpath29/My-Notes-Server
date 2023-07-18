@@ -1,6 +1,7 @@
-const { log } = require("console");
 const db = require(`../postgreSQL/db`);
 const path = require(`path`);
+const fs = require("fs");
+const { log } = require("console");
 class UserInfoController {
     async createInfoUser(req, res) {
         try {
@@ -51,6 +52,57 @@ class UserInfoController {
             res.json(posts.rows);
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async editInfoUser(req, res) {
+        try {
+            const { data } = req.body;
+            const json = JSON.parse(data);
+            let photo = json.photo;
+            if (req.files) {
+                fs.rm(
+                    path.resolve(
+                        __dirname,
+                        `..`,
+                        `..`,
+                        `assets`,
+                        `userIcon`,
+                        json.photo
+                    ),
+                    () => {
+                        console.log(`Photo ${json.photo} is delete`);
+                    }
+                );
+                const img = req.files.img;
+                const fileName = Date.now() + img.name.slice(-5);
+                const filePath = path.resolve(
+                    __dirname,
+                    "..",
+                    "..",
+                    "assets",
+                    "userIcon",
+                    fileName
+                );
+                photo = fileName;
+                req.files.img.mv(filePath);
+            }
+            const updateInfoUser = await db.query(
+                `UPDATE infoUser set name = $1, surname = $2, photo = $3, birthday = $4, country = $5, city = $6, address = $7 where id = $8 RETURNING *`,
+                [
+                    json.name,
+                    json.surname,
+                    photo,
+                    json.birthday,
+                    json.country,
+                    json.city,
+                    json.address,
+                    json.infoUser_id,
+                ]
+            );
+            res.json(updateInfoUser.rows[0]);
+        } catch (error) {
+            console.log(error.message);
         }
     }
 }
