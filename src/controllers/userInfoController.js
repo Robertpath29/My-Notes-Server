@@ -1,7 +1,6 @@
 const db = require(`../postgreSQL/db`);
 const path = require(`path`);
 const fs = require("fs");
-const { log } = require("console");
 class UserInfoController {
     async createInfoUser(req, res) {
         try {

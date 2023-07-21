@@ -17,3 +17,12 @@ CREATE TABLE infoUser(
     user_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES person(id)
 );
+CREATE TABLE notes(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    textarea TEXT,
+    color VARCHAR(255),
+    done BOOLEAN DEFAULT false,
+    user_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES person(id)
+);
