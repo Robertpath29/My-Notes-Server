@@ -71,5 +71,18 @@ class UserController {
             res.json({ message: `error log in user (${error.message})` });
         }
     }
+
+    async getUser(req, res) {
+        try {
+            const { login } = req.query;
+            const user = await db.query(
+                `SELECT * FROM person where login = $1`,
+                [login]
+            );
+            res.json(user.rows[0]);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
 }
 module.exports = new UserController();

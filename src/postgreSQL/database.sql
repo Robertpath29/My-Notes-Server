@@ -27,3 +27,11 @@ CREATE TABLE notes(
     user_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES person(id)
 );
+CREATE TABLE friends(
+    id SERIAL PRIMARY KEY,
+    login VARCHAR(255),
+    user_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES person(id)
+);
+
+
