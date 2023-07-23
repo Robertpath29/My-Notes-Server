@@ -1,4 +1,5 @@
 const express = require(`express`);
+const webSocketOnlineUser = require(`./webSocket/webSocketOnlineUser`);
 const cors = require(`cors`);
 const PORT = process.env.PORT || 5001;
 const router = require(`./routers/routers`);
@@ -27,3 +28,4 @@ const startServer = () => {
 };
 
 startServer();
+webSocketOnlineUser();

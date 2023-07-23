@@ -2,6 +2,7 @@ CREATE TABLE person (
     id SERIAL PRIMARY KEY,
     login VARCHAR(255),
     email VARCHAR(255),
+    online: BOOLEAN DEFAULT false,
     password VARCHAR(255)
 );
 
