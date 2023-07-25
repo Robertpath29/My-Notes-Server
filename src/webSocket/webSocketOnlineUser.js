@@ -1,29 +1,53 @@
 const WebSocket = require("ws");
 const db = require(`../postgreSQL/db`);
 const wss = new WebSocket.Server({ port: 8080 });
+
+const users = {};
+
 function webSocketOnlineUser() {
     wss.on("connection", (ws) => {
-        let userLogin = "";
         let userId = null;
         console.log("new user connecting");
 
         ws.on("message", (message) => {
             const user = JSON.parse(message);
-            console.log(`user: ${user.login}`);
-            userLogin = user.login;
-            userId = user.id;
-            try {
-                db.query(
-                    `UPDATE person set online = $1 where id = $2 RETURNING *`,
-                    [true, user.id]
-                );
-            } catch (error) {
-                console.log(error.message);
+
+            if (user.dataUser) {
+                console.log(`user: ${user.login}`);
+                const userLogin = user.login;
+                userId = user.id;
+                users[userId] = { userLogin, ws };
+
+                try {
+                    db.query(
+                        `UPDATE person set online = $1 where id = $2 RETURNING *`,
+                        [true, user.id]
+                    );
+                } catch (error) {
+                    console.log(error.message);
+                }
+            } else {
+                if (users[userId]) {
+                    for (const userIdLogin in users) {
+                        if (user.whom === users[userIdLogin].userLogin) {
+                            users[userIdLogin].ws.send(JSON.stringify(user));
+                        }
+                    }
+                }
             }
         });
 
         ws.on("close", () => {
-            console.log(`the user ${userLogin} has logged out`);
+            if (users[userId]) {
+                const userLogin = users[userId].userLogin;
+                console.log(
+                    `the user ${userLogin} has logged out` +
+                        "\n" +
+                        "_______________________"
+                );
+                delete users[userId];
+            }
+
             try {
                 db.query(
                     `UPDATE person set online = $1 where id = $2 RETURNING *`,

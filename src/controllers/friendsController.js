@@ -1,4 +1,3 @@
-const { json } = require("express");
 const db = require(`../postgreSQL/db`);
 
 class FriendsController {
