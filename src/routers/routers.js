@@ -18,5 +18,6 @@ router.put(`/newNote`, notesController.editNote);
 router.delete(`/newNote`, notesController.deleteNote);
 router.post(`/friends`, friendsController.addFriends);
 router.get(`/friends`, friendsController.getFriends);
+router.delete(`/friends`, friendsController.deleteFriends);
 
 module.exports = router;

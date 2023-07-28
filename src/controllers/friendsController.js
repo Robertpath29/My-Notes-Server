@@ -48,6 +48,20 @@ class FriendsController {
             console.log(error.message);
         }
     }
+
+    async deleteFriends(req, res) {
+        const { myId, friendId, myLogin, friendLogin } = req.query;
+        db.query(`DELETE FROM friends where login = $1 AND user_id = $2`, [
+            myLogin,
+            friendId,
+        ]);
+        db.query(`DELETE FROM friends where login = $1 AND user_id = $2`, [
+            friendLogin,
+            myId,
+        ]);
+
+        res.json({ message: "friends delete" });
+    }
 }
 
 module.exports = new FriendsController();

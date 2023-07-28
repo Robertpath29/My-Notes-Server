@@ -11,7 +11,6 @@ function webSocketOnlineUser() {
 
         ws.on("message", (message) => {
             const user = JSON.parse(message);
-
             if (user.dataUser) {
                 console.log(`user: ${user.login}`);
                 const userLogin = user.login;
@@ -27,9 +26,37 @@ function webSocketOnlineUser() {
                     console.log(error.message);
                 }
             } else {
+                if (user.name && user.name !== "") {
+                    for (const userIdLogin in users) {
+                        if (user.name === users[userIdLogin].userLogin) {
+                            if (user.delete === true) {
+                                users[userIdLogin].ws.send(
+                                    JSON.stringify({
+                                        userFriends: {
+                                            message:
+                                                "you have been deleted from friends",
+                                        },
+                                    })
+                                );
+                            } else {
+                                users[userIdLogin].ws.send(
+                                    JSON.stringify({
+                                        userFriends: {
+                                            message:
+                                                "you have been added to friends",
+                                        },
+                                    })
+                                );
+                            }
+                        }
+                    }
+                }
                 if (users[userId]) {
                     for (const userIdLogin in users) {
-                        if (user.whom === users[userIdLogin].userLogin) {
+                        if (
+                            user.whom === users[userIdLogin].userLogin ||
+                            user.fromWhom === users[userIdLogin].userLogin
+                        ) {
                             users[userIdLogin].ws.send(JSON.stringify(user));
                         }
                     }
