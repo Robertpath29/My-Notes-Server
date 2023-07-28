@@ -55,7 +55,7 @@ function webSocketOnlineUser() {
                     for (const userIdLogin in users) {
                         if (
                             user.whom === users[userIdLogin].userLogin ||
-                            user.fromWhom === users[userIdLogin].userLogin
+                            user.from_whom === users[userIdLogin].userLogin
                         ) {
                             users[userIdLogin].ws.send(JSON.stringify(user));
                         }

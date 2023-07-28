@@ -3,6 +3,7 @@ const userController = require("../controllers/userController");
 const userInfoController = require("../controllers/userInfoController");
 const notesController = require("../controllers/notesController");
 const friendsController = require("../controllers/friendsController");
+const messageController = require("../controllers/messageController");
 
 const router = new Routers();
 
@@ -19,5 +20,7 @@ router.delete(`/newNote`, notesController.deleteNote);
 router.post(`/friends`, friendsController.addFriends);
 router.get(`/friends`, friendsController.getFriends);
 router.delete(`/friends`, friendsController.deleteFriends);
+router.get(`/friends/message`, messageController.getMessage);
+router.post(`/friends/message`, messageController.addMessage);
 
 module.exports = router;
