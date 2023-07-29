@@ -27,6 +27,9 @@ class UserController {
                 `INSERT INTO person (login, email, password) VALUES ($1, $2, $3) RETURNING *`,
                 [userName, email, hashPassword]
             );
+            db.query(
+                `CREATE TABLE table_unread_message_${userName.toLowerCase()} (id SERIAL PRIMARY KEY, name_friend VARCHAR(255))`
+            );
             res.json({
                 message: `You have successfully registered!`,
                 userIsRegistered: true,
