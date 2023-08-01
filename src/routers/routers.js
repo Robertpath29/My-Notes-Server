@@ -4,6 +4,7 @@ const userInfoController = require("../controllers/userInfoController");
 const notesController = require("../controllers/notesController");
 const friendsController = require("../controllers/friendsController");
 const messageController = require("../controllers/messageController");
+const unreadMessageController = require("../controllers/unreadMessageController");
 
 const router = new Routers();
 
@@ -22,5 +23,14 @@ router.get(`/friends`, friendsController.getFriends);
 router.delete(`/friends`, friendsController.deleteFriends);
 router.get(`/friends/message`, messageController.getMessage);
 router.post(`/friends/message`, messageController.addMessage);
+router.get(`/friends/unread/message`, unreadMessageController.getUnreadMessage);
+router.post(
+    `/friends/unread/message`,
+    unreadMessageController.addUnreadMessage
+);
+router.delete(
+    `/friends/unread/message`,
+    unreadMessageController.deleteUnreadMessage
+);
 
 module.exports = router;

@@ -13,7 +13,7 @@ class MessageController {
     }
     async addMessage(req, res) {
         try {
-            const { from_Whom, whom, message, date, nameTableMessage } =
+            const { from_whom, whom, message, date, nameTableMessage } =
                 req.body;
             const online = await db.query(
                 `
@@ -25,12 +25,12 @@ class MessageController {
                 db.query(
                     `
                 INSERT INTO table_unread_message_${whom.toLowerCase()} (name_friend) VALUES ($1) RETURNING *`,
-                    [from_Whom]
+                    [from_whom]
                 );
             }
             const response = await db.query(
                 `INSERT INTO table_message_${nameTableMessage} (from_whom, whom, message, date) VALUES ($1, $2, $3, $4) RETURNING *`,
-                [from_Whom, whom, message, date]
+                [from_whom, whom, message, date]
             );
             res.json(response.rows);
         } catch (error) {
