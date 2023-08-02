@@ -1,12 +1,26 @@
+const { json } = require("express");
 const db = require(`../postgreSQL/db`);
 class MessageController {
     async getMessage(req, res) {
         try {
-            const { nameTableMessage } = req.query;
+            const { nameTableMessage, numberMessage } = req.query;
+            const filterArray = [];
             const response = await db.query(`
             SELECT * FROM table_message_${nameTableMessage}
             `);
-            res.json(response.rows);
+
+            if (response) {
+                let index = response.rows.length - numberMessage;
+                if (index < 0) {
+                    res.json(response.rows);
+                    return;
+                }
+                for (index; index < response.rows.length; index++) {
+                    const res = response.rows[index];
+                    filterArray.push(res);
+                }
+            }
+            res.json(filterArray);
         } catch (error) {
             console.log(error.message);
         }
