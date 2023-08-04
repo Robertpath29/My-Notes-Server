@@ -4,7 +4,7 @@
     "description": "server for My Notes",
     "main": "index.js",
     "scripts": {
-        "start": "PORT=5001 nodemon src/index.js"
+        "start": "node src/index.js"
     },
     "repository": {
         "type": "git",

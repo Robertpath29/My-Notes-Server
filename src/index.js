@@ -1,17 +1,16 @@
 const express = require(`express`);
 const webSocketOnlineUser = require(`./webSocket/webSocketOnlineUser`);
 const cors = require(`cors`);
-const PORT = process.env.PORT || 5001;
 const router = require(`./routers/routers`);
 const fileUpload = require(`express-fileupload`);
 const server = express();
+const PORT = process.env.PORT || 5001;
 
 server.use(express.json());
 server.use(express.static(`./assets/userIcon`));
 server.use(fileUpload({}));
 server.use(
     cors({
-        origin: "http://192.168.1.104:3000",
         credentials: true,
     })
 );
@@ -19,8 +18,8 @@ server.use(`/`, router);
 
 const startServer = () => {
     try {
-        server.listen(PORT, "192.168.1.104", () =>
-            console.log(`Server start from PORT=http://192.168.1.104:${PORT}`)
+        server.listen(PORT, () =>
+            console.log(`Server start from PORT=${PORT}`)
         );
     } catch (error) {
         console.log(error.message);
