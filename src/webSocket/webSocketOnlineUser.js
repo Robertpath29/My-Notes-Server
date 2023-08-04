@@ -1,10 +1,10 @@
 const WebSocket = require("ws");
-const db = require(`../postgreSQL/db`);
-const wss = new WebSocket.Server({ port: 8080 });
+const db = require("../mysql/db");
 
 const users = {};
 
-function webSocketOnlineUser() {
+function webSocketOnlineUser(httpServer) {
+    const wss = new WebSocket.Server({ server: httpServer });
     wss.on("connection", (ws) => {
         let userId = null;
         console.log("new user connecting");
@@ -18,8 +18,8 @@ function webSocketOnlineUser() {
                 users[userId] = { userLogin, ws };
 
                 try {
-                    db.query(
-                        `UPDATE person set online = $1 where id = $2 RETURNING *`,
+                    db.promise().query(
+                        `UPDATE person set online = ? where id = ?`,
                         [true, user.id]
                     );
                 } catch (error) {
@@ -76,8 +76,8 @@ function webSocketOnlineUser() {
             }
 
             try {
-                db.query(
-                    `UPDATE person set online = $1 where id = $2 RETURNING *`,
+                db.promise().query(
+                    `UPDATE person set online = ? where id = ?`,
                     [false, userId]
                 );
             } catch (error) {

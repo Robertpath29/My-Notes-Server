@@ -1,39 +1,47 @@
-const db = require(`../postgreSQL/db`);
+const db = require("../mysql/db");
 
 class FriendsController {
     async addFriends(req, res) {
         try {
-            const nameTableMessage = Date.now();
+            const nameTableMessage = Date.now().toString();
             const { myId, friendId, myLogin, friendLogin } = req.body;
             let repeatFriend = false;
 
-            const myFriend = await db.query(
-                `SELECT * FROM friends where user_id = $1`,
-                [myId]
-            );
+            const [myFriend] = await db
+                .promise()
+                .query(`SELECT * FROM friends WHERE user_id = ?`, [myId]);
 
-            myFriend.rows.forEach((friend) => {
+            myFriend.forEach((friend) => {
                 if (friend.login === friendLogin) {
                     repeatFriend = true;
                     return;
                 }
             });
+
             if (repeatFriend) {
                 res.send({ message: "The user is your friend" });
                 return;
             }
-            db.query(
-                `INSERT INTO friends (login, table_message_name, user_id) VALUES ($1, $2, $3) RETURNING *`,
-                [myLogin, nameTableMessage, friendId]
-            );
-            db.query(
-                `INSERT INTO friends (login, table_message_name, user_id) VALUES ($1, $2, $3) RETURNING *`,
-                [friendLogin, nameTableMessage, myId]
-            );
 
-            db.query(
-                `CREATE TABLE table_message_${nameTableMessage.toString()} (id SERIAL PRIMARY KEY, from_whom VARCHAR(255), whom VARCHAR(255), message TEXT, date VARCHAR(255))`
-            );
+            await db
+                .promise()
+                .query(
+                    `INSERT INTO friends (login, table_message_name, user_id) VALUES (?, ?, ?)`,
+                    [myLogin, nameTableMessage, friendId]
+                );
+
+            await db
+                .promise()
+                .query(
+                    `INSERT INTO friends (login, table_message_name, user_id) VALUES (?, ?, ?)`,
+                    [friendLogin, nameTableMessage, myId]
+                );
+
+            await db
+                .promise()
+                .query(
+                    `CREATE TABLE table_message_${nameTableMessage} (id INT AUTO_INCREMENT PRIMARY KEY, from_whom VARCHAR(255), whom VARCHAR(255), message TEXT, date VARCHAR(255))`
+                );
 
             res.json({ message: "friends ready", nameTableMessage });
         } catch (error) {
@@ -44,11 +52,10 @@ class FriendsController {
     async getFriends(req, res) {
         try {
             const { user_id } = req.query;
-            const friends = await db.query(
-                `SELECT * FROM friends where user_id = $1`,
-                [user_id]
-            );
-            res.json(friends.rows);
+            const [friends] = await db
+                .promise()
+                .query(`SELECT * FROM friends WHERE user_id = ?`, [user_id]);
+            res.json(friends);
         } catch (error) {
             console.log(error.message);
         }
@@ -58,15 +65,21 @@ class FriendsController {
         try {
             const { myId, friendId, myLogin, friendLogin, nameTableMessage } =
                 req.query;
-            db.query(`DELETE FROM friends where login = $1 AND user_id = $2`, [
-                myLogin,
-                friendId,
-            ]);
-            db.query(`DELETE FROM friends where login = $1 AND user_id = $2`, [
-                friendLogin,
-                myId,
-            ]);
-            db.query(`DROP TABLE table_message_${nameTableMessage}`);
+            await db
+                .promise()
+                .query(`DELETE FROM friends WHERE login = ? AND user_id = ?`, [
+                    myLogin,
+                    friendId,
+                ]);
+            await db
+                .promise()
+                .query(`DELETE FROM friends WHERE login = ? AND user_id = ?`, [
+                    friendLogin,
+                    myId,
+                ]);
+            await db
+                .promise()
+                .query(`DROP TABLE table_message_${nameTableMessage}`);
 
             res.json({ message: "friends delete" });
         } catch (error) {

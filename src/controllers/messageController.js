@@ -1,22 +1,23 @@
 const { json } = require("express");
-const db = require(`../postgreSQL/db`);
+const db = require("../mysql/db");
+
 class MessageController {
     async getMessage(req, res) {
         try {
             const { nameTableMessage, numberMessage } = req.query;
             const filterArray = [];
-            const response = await db.query(`
-            SELECT * FROM table_message_${nameTableMessage}
-            `);
+            const [response] = await db
+                .promise()
+                .query(`SELECT * FROM table_message_${nameTableMessage}`);
 
             if (response) {
-                let index = response.rows.length - numberMessage;
+                let index = response.length - numberMessage;
                 if (index < 0) {
-                    res.json(response.rows);
+                    res.json(response);
                     return;
                 }
-                for (index; index < response.rows.length; index++) {
-                    const res = response.rows[index];
+                for (index; index < response.length; index++) {
+                    const res = response[index];
                     filterArray.push(res);
                 }
             }
@@ -25,28 +26,29 @@ class MessageController {
             console.log(error.message);
         }
     }
+
     async addMessage(req, res) {
         try {
             const { from_whom, whom, message, date, nameTableMessage } =
                 req.body;
-            const online = await db.query(
-                `
-                SELECT * FROM person where login = $1
-                `,
-                [whom]
-            );
-            if (!online.rows[0].online) {
-                db.query(
-                    `
-                INSERT INTO table_unread_message_${whom.toLowerCase()} (name_friend) VALUES ($1) RETURNING *`,
-                    [from_whom]
-                );
+            const [online] = await db
+                .promise()
+                .query(`SELECT * FROM person where login = ?`, [whom]);
+            if (!online[0].online) {
+                await db
+                    .promise()
+                    .query(
+                        `INSERT INTO table_unread_message_${whom.toLowerCase()} (name_friend) VALUES (?)`,
+                        [from_whom]
+                    );
             }
-            const response = await db.query(
-                `INSERT INTO table_message_${nameTableMessage} (from_whom, whom, message, date) VALUES ($1, $2, $3, $4) RETURNING *`,
-                [from_whom, whom, message, date]
-            );
-            res.json(response.rows);
+            const [response] = await db
+                .promise()
+                .query(
+                    `INSERT INTO table_message_${nameTableMessage} (from_whom, whom, message, date) VALUES (?, ?, ?, ?)`,
+                    [from_whom, whom, message, date]
+                );
+            res.json(response);
         } catch (error) {
             console.log(error.message);
         }
