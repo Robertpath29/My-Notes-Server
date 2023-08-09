@@ -7,9 +7,7 @@ class UnreadMessageController {
             if (login) {
                 const [response] = await db
                     .promise()
-                    .query(
-                        `SELECT * FROM table_unread_message_${login.toLowerCase()}`
-                    );
+                    .query(`SELECT * FROM table_unread_message_${login}`);
                 res.json(response);
                 return;
             }

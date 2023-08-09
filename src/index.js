@@ -8,11 +8,11 @@ const server = express();
 const PORT = process.env.PORT || 5001;
 
 server.use(express.json());
-server.use(express.static(`./assets/userIcon`));
+server.use(express.static(`./src/assets/userIcon`));
 server.use(fileUpload({}));
 server.use(
     cors({
-        origin: "https://my-notes-wheat.vercel.app",
+        origin: "https://my-notes-iota.vercel.app",
         credentials: true,
     })
 );

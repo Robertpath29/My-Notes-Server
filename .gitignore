@@ -10,7 +10,8 @@
 
 # production
 /build
-/assets
+/src/assets/userIcon/*
+!src/assets/userIcon/.gitkeep
 
 # misc
 .DS_Store

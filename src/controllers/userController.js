@@ -7,9 +7,7 @@ class UserController {
             const { userName, email, password } = req.body;
             const [repeatUsername] = await db
                 .promise()
-                .query(`SELECT * FROM person WHERE login = ?`, [
-                    userName.toLowerCase(),
-                ]);
+                .query(`SELECT * FROM person WHERE login = ?`, [userName]);
             const [repeatEmail] = await db
                 .promise()
                 .query(`SELECT * FROM person WHERE email = ?`, [email]);
@@ -31,13 +29,13 @@ class UserController {
                 .promise()
                 .query(
                     `INSERT INTO person (login, email, password) VALUES (?, ?, ?)`,
-                    [userName.toLowerCase(), email, hashPassword]
+                    [userName, email, hashPassword]
                 );
 
             await db
                 .promise()
                 .query(
-                    `CREATE TABLE table_unread_message_${userName.toLowerCase()} (id INT AUTO_INCREMENT PRIMARY KEY, name_friend VARCHAR(255))`
+                    `CREATE TABLE table_unread_message_${userName} (id INT AUTO_INCREMENT PRIMARY KEY, name_friend VARCHAR(255))`
                 );
 
             res.json({
@@ -55,9 +53,7 @@ class UserController {
             const { userName, password } = req.query;
             const [repeatUsername] = await db
                 .promise()
-                .query(`SELECT * FROM person WHERE login = ?`, [
-                    userName.toLowerCase(),
-                ]);
+                .query(`SELECT * FROM person WHERE login = ?`, [userName]);
 
             if (repeatUsername.length === 0) {
                 return res.json({

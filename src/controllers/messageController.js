@@ -48,7 +48,9 @@ class MessageController {
                     `INSERT INTO table_message_${nameTableMessage} (from_whom, whom, message, date) VALUES (?, ?, ?, ?)`,
                     [from_whom, whom, message, date]
                 );
-            res.json(response);
+            if (response) {
+                res.json({ message: "message delivered!" });
+            }
         } catch (error) {
             console.log(error.message);
         }

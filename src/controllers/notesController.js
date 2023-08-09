@@ -10,7 +10,9 @@ class NotesController {
                     `INSERT INTO notes (name, textarea, color, user_id) VALUES (?, ?, ?, ?)`,
                     [name, textarea, color, user_id]
                 );
-            res.json({ message: "note created!", response });
+            if (response) {
+                res.json({ message: "note created" });
+            }
         } catch (error) {
             console.log(error.message);
         }
@@ -62,7 +64,9 @@ class NotesController {
                     `UPDATE notes SET name = ?, textarea = ?, color = ?, done = ? WHERE id = ?`,
                     [data.name, data.textarea, data.color, data.done, data.id]
                 );
-            res.json(updateNote);
+            if (updateNote) {
+                res.json({ message: "note update" });
+            }
         } catch (error) {
             console.log(error.message);
         }
@@ -74,7 +78,9 @@ class NotesController {
             const [note] = await db
                 .promise()
                 .query(`DELETE FROM notes WHERE id = ?`, [id]);
-            res.json(note);
+            if (note) {
+                res.json({ message: "note delete" });
+            }
         } catch (error) {
             console.log(error.message);
         }

@@ -14,7 +14,6 @@ class UserInfoController {
                 const filePath = path.resolve(
                     __dirname,
                     "..",
-                    "..",
                     "assets",
                     "userIcon",
                     fileName
@@ -38,7 +37,14 @@ class UserInfoController {
                         json.user_id,
                     ]
                 );
-            res.json(newInfoUser);
+            if (newInfoUser) {
+                const infoUser = await db
+                    .promise()
+                    .query(`SELECT * FROM infoUser where user_id = ?`, [
+                        json.user_id,
+                    ]);
+                res.json(infoUser[0][0]);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -62,29 +68,28 @@ class UserInfoController {
             const json = JSON.parse(data);
             let photo = json.photo;
             if (req.files) {
-                await fs.unlink(
-                    path.resolve(
-                        __dirname,
-                        "..",
-                        "..",
-                        "assets",
-                        "userIcon",
-                        json.photo
-                    )
-                );
-
+                if (photo) {
+                    fs.rm(
+                        path.resolve(
+                            __dirname,
+                            `..`,
+                            `assets`,
+                            `userIcon`,
+                            json.photo
+                        )
+                    );
+                }
                 const img = req.files.img;
                 const fileName = Date.now() + img.name.slice(-5);
                 const filePath = path.resolve(
                     __dirname,
-                    "..",
                     "..",
                     "assets",
                     "userIcon",
                     fileName
                 );
                 photo = fileName;
-                await img.mv(filePath);
+                req.files.img.mv(filePath);
             }
             const [updateInfoUser] = await db
                 .promise()
@@ -101,7 +106,14 @@ class UserInfoController {
                         json.infoUser_id,
                     ]
                 );
-            res.json(updateInfoUser);
+            if (updateInfoUser) {
+                const infoUser = await db
+                    .promise()
+                    .query(`SELECT * FROM infoUser where id = ?`, [
+                        json.infoUser_id,
+                    ]);
+                res.json(infoUser[0][0]);
+            }
         } catch (error) {
             console.log(error.message);
         }
